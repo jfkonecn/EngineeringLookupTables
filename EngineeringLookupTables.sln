@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2019
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EngineeringLookupTables", "EngineeringLookupTables\EngineeringLookupTables.csproj", "{06010A3C-98C4-4F64-B743-F6DD6C3E37CA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{06010A3C-98C4-4F64-B743-F6DD6C3E37CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06010A3C-98C4-4F64-B743-F6DD6C3E37CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06010A3C-98C4-4F64-B743-F6DD6C3E37CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{06010A3C-98C4-4F64-B743-F6DD6C3E37CA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5FA5C7CB-56B3-4795-8BCB-49BC6C6FAB41}
+	EndGlobalSection
+EndGlobal
