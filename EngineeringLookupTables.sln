@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.28010.2019
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EngineeringLookupTables", "EngineeringLookupTables\EngineeringLookupTables.csproj", "{06010A3C-98C4-4F64-B743-F6DD6C3E37CA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EngineeringLookupTables.Tests", "EngineeringLookupTables.Tests\EngineeringLookupTables.Tests.csproj", "{7FA4D246-1A27-4EEC-94DA-349E44028885}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{06010A3C-98C4-4F64-B743-F6DD6C3E37CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{06010A3C-98C4-4F64-B743-F6DD6C3E37CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{06010A3C-98C4-4F64-B743-F6DD6C3E37CA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7FA4D246-1A27-4EEC-94DA-349E44028885}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7FA4D246-1A27-4EEC-94DA-349E44028885}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7FA4D246-1A27-4EEC-94DA-349E44028885}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7FA4D246-1A27-4EEC-94DA-349E44028885}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
