@@ -1,8 +1,9 @@
-﻿using System;
+﻿using EngineeringMath.Resources.PVTTables;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace EngineeringMath.Resources.PVTTables
+namespace EngineeringLookupTables.PVTTable
 {
     public interface IPVTTable
     {
@@ -12,7 +13,7 @@ namespace EngineeringMath.Resources.PVTTables
         /// <param name="temperature">Desired Temperture (K)</param>
         /// <param name="pressure">Desired Pressure (Pa)</param>
         /// <returns></returns>
-        IThermoEntry GetThermoEntryAtTemperatureAndPressure(double temperature, double pressure);
+        PVTEntry GetThermoEntryAtTemperatureAndPressure(double temperature, double pressure);
 
         /// <summary>
         /// Gets ThermoEntry for saturated liquid or vapor at passed pressure. Null when no entry found.
@@ -20,7 +21,7 @@ namespace EngineeringMath.Resources.PVTTables
         /// <param name="pressure">Desired Pressure (Pa)</param>
         /// <param name="phase"></param>
         /// <returns></returns>
-        IThermoEntry GetThermoEntryAtSatPressure(double pressure, SaturationRegion phase);
+        PVTEntry GetThermoEntryAtSatPressure(double pressure, SaturationRegion phase);
 
         /// <summary>
         /// Gets ThermoEntry and Pressure for saturated liquid or vapor at passed satTemp. Null when no entry found.
@@ -28,7 +29,7 @@ namespace EngineeringMath.Resources.PVTTables
         /// <param name="satTemp">Desired saturation temperature</param>
         /// <param name="phase"></param>
         /// <returns></returns>
-        IThermoEntry GetThermoEntryAtSatTemp(double satTemp, SaturationRegion phase);
+        PVTEntry GetThermoEntryAtSatTemp(double satTemp, SaturationRegion phase);
 
         /// <summary>
         /// Gets the ThermoEntry which matches the entropy and pressure passed
@@ -36,7 +37,7 @@ namespace EngineeringMath.Resources.PVTTables
         /// <param name="entropy">J/(kg*K)</param>
         /// <param name="pressure">Pa</param>
         /// <returns></returns>
-        IThermoEntry GetThermoEntryAtEntropyAndPressure(double entropy, double pressure);
+        PVTEntry GetThermoEntryAtEntropyAndPressure(double entropy, double pressure);
 
         /// <summary>
         /// Gets the ThermoEntry which matches the entropy and pressure passed
@@ -44,7 +45,7 @@ namespace EngineeringMath.Resources.PVTTables
         /// <param name="entropy">kJ/(kg*K)</param>
         /// <param name="pressure">Pa</param>
         /// <returns></returns>
-        IThermoEntry GetThermoEntryAtEnthalpyAndPressure(double enthalpy, double pressure);
+        PVTEntry GetThermoEntryAtEnthalpyAndPressure(double enthalpy, double pressure);
         /// <summary>
         /// In K
         /// </summary>

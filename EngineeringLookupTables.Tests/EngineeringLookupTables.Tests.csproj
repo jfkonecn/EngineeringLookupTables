@@ -48,12 +48,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Helpers\ThermoEntryHelpers.cs" />
+    <Compile Include="Helpers\PVTEntryHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SteamTableMethods.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\EngineeringLookupTables\EngineeringLookupTables.csproj">
+      <Project>{06010a3c-98c4-4f64-b743-f6dd6c3e37ca}</Project>
+      <Name>EngineeringLookupTables</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

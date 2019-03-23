@@ -29,6 +29,7 @@ namespace EngineeringLookupTables
         SolidLiquid,
         LiquidVapor,
         SolidVapor,
-        SolidLiquidVapor
+        SolidLiquidVapor,
+        OutOfBounds
     }
 }
