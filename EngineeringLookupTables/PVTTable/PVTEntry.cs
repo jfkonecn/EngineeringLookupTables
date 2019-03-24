@@ -35,7 +35,7 @@ namespace EngineeringLookupTables.PVTTable
             VaporMassFraction = vaporMassFraction;
             LiquidMassFraction = liquidMassFraction;
             SolidMassFraction = solidMassFraction;
-
+            UpdateRegion();
 
             InterpolateProperties((x) => x.Temperature, (x) => Temperature = x, container);
             InterpolateProperties((x) => x.Pressure, (x) => Pressure = x, container);
@@ -59,49 +59,43 @@ namespace EngineeringLookupTables.PVTTable
             if (container.SolidEntry != null)
                 num += getter(container.SolidEntry) * SolidMassFraction;
             setter(num);
-        }
+        }       
 
 
-
-
-
-
-        public Region Region
+        private void UpdateRegion()
         {
-            get
+            Region = Region.OutOfBounds;
+            if (VaporMassFraction != 0 && LiquidMassFraction != 0 && SolidMassFraction != 0)
             {
-                Region temp = Region.OutOfBounds;
-                if (VaporMassFraction != 0 && LiquidMassFraction != 0 && SolidMassFraction != 0)
-                {
-                    temp = Region.SolidLiquidVapor;
-                }
-                else if (VaporMassFraction != 0 && LiquidMassFraction != 0 && SolidMassFraction == 0)
-                {
-                    temp = Region.LiquidVapor;
-                }
-                else if (VaporMassFraction != 0 && LiquidMassFraction == 0 && SolidMassFraction != 0)
-                {
-                    temp = Region.SolidVapor;
-                }
-                else if (VaporMassFraction != 0 && LiquidMassFraction == 0 && SolidMassFraction == 0)
-                {
-                    temp = Region.Vapor;
-                }
-                else if (VaporMassFraction == 0 && LiquidMassFraction != 0 && SolidMassFraction != 0)
-                {
-                    temp = Region.SolidLiquid;
-                }
-                else if (VaporMassFraction == 0 && LiquidMassFraction != 0 && SolidMassFraction == 0)
-                {
-                    temp = Region.Liquid;
-                }
-                else if (VaporMassFraction == 0 && LiquidMassFraction == 0 && SolidMassFraction != 0)
-                {
-                    temp = Region.Solid;
-                }
-                return temp;
+                Region = Region.SolidLiquidVapor;
+            }
+            else if (VaporMassFraction != 0 && LiquidMassFraction != 0 && SolidMassFraction == 0)
+            {
+                Region = Region.LiquidVapor;
+            }
+            else if (VaporMassFraction != 0 && LiquidMassFraction == 0 && SolidMassFraction != 0)
+            {
+                Region = Region.SolidVapor;
+            }
+            else if (VaporMassFraction != 0 && LiquidMassFraction == 0 && SolidMassFraction == 0)
+            {
+                Region = Region.Vapor;
+            }
+            else if (VaporMassFraction == 0 && LiquidMassFraction != 0 && SolidMassFraction != 0)
+            {
+                Region = Region.SolidLiquid;
+            }
+            else if (VaporMassFraction == 0 && LiquidMassFraction != 0 && SolidMassFraction == 0)
+            {
+                Region = Region.Liquid;
+            }
+            else if (VaporMassFraction == 0 && LiquidMassFraction == 0 && SolidMassFraction != 0)
+            {
+                Region = Region.Solid;
             }
         }
+
+        public Region Region { get; set; }
         /// <summary>
         /// between 0 and 1
         /// </summary>

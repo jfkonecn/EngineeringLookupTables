@@ -11,12 +11,14 @@ namespace EngineeringLookupTables.PVTTable.SteamTableHelpers
     internal abstract class GibbsEntryFactoryBase : IPVTEntryFactory
     {
 
-        protected GibbsEntryFactoryBase(Region region)
+        protected GibbsEntryFactoryBase(Region region, double temperature, double pressure)
         {
             Region = region;
+            Props.Temperature = temperature;
+            Props.Pressure = pressure;
         }
 
-        public PVTEntry BuildThermoEntry()
+        public virtual PVTEntry BuildThermoEntry()
         {
             return new PVTEntry()
             {
@@ -32,6 +34,6 @@ namespace EngineeringLookupTables.PVTTable.SteamTableHelpers
         }
 
         public Region Region { get; protected set; }
-        internal IAPWSProperties Props { get; } = new IAPWSProperties();
+        internal StandardProperties Props { get; } = new StandardProperties();
     }
 }

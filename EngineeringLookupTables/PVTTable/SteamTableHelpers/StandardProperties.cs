@@ -4,7 +4,7 @@ using System.Text;
 
 namespace EngineeringLookupTables.PVTTable.SteamTableHelpers
 {
-    internal class IAPWSProperties
+    internal class StandardProperties
     {
         /// <summary>
         /// In K

@@ -6,7 +6,8 @@ namespace EngineeringLookupTables.PVTTable.SteamTableHelpers
 {
     internal class Region1Factory : GibbsEntryFactoryBase
     {
-        public Region1Factory(double temperature, double pressure) : base(Region.Liquid)
+        public Region1Factory(double temperature, double pressure) : 
+            base(Region.Liquid, temperature, pressure)
         {
             Props.Pi = pressure / 16.53e6;
             Props.Tau = 1386.0 / temperature;
