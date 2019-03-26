@@ -1,4 +1,5 @@
-﻿using EngineeringLookupTables.NumericalMethods;
+﻿using EngineeringLookupTables.Common;
+using EngineeringLookupTables.NumericalMethods;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,7 +9,7 @@ namespace EngineeringLookupTables.PVTTable
     /// <summary>
     /// Base on IAPWS Industrial Formulation 1997
     /// </summary>
-    public class SteamTable : IPVTTable
+    public class SteamTable : PVTTable
     {
         public readonly static SteamTable Table = new SteamTable();
 
@@ -34,9 +35,11 @@ namespace EngineeringLookupTables.PVTTable
         /// <returns></returns>
         private SteamEquationRegion FindRegion(double temperature, double pressure)
         {
-            if (temperature < MinTemperature || temperature > MaxTemperature ||
-                pressure < MinPressure || pressure > MaxPressure ||
-                (pressure > 50e6 && temperature > 1073.15))
+            Range tempRange = GetTemperatureRange(pressure);
+            Range preRange = GetPressureRange(temperature);
+
+            if (!tempRange.IsWithin(temperature) ||
+                !preRange.IsWithin(pressure))
             {
                 return SteamEquationRegion.OutOfRange;
             }
@@ -165,70 +168,8 @@ namespace EngineeringLookupTables.PVTTable
         };
 
 
+      
 
-        #region IPVTTableMembers
-
-        public readonly double CriticalTemperature = 647.096;
-
-        public readonly double CriticalPressure = 22.06e6;
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="enthalpy"></param>
-        /// <param name="pressure"></param>
-        /// <returns>null if an entry cannot be found</returns>
-        public IThermoEntry GetThermoEntryAtEnthalpyAndPressure(double enthalpy, double pressure)
-        {
-            IThermoEntry liqEntry = GetThermoEntryAtSatPressure(pressure, SaturationRegion.Liquid),
-                vapEntry = GetThermoEntryAtSatPressure(pressure, SaturationRegion.Vapor);
-            if (vapEntry != null && liqEntry != null &&
-                vapEntry.Enthalpy >= enthalpy && liqEntry.Enthalpy <= enthalpy)
-            {
-                return PVTEntry.BuildLiquidVaporEntry(vapEntry, liqEntry, (vapEntry.Enthalpy - enthalpy) / (vapEntry.Enthalpy - liqEntry.Enthalpy));
-            }
-
-            double fx(double x)
-            {
-                IThermoEntry thermoEntry = GetThermoEntryAtTemperatureAndPressure(x, pressure);
-                if (thermoEntry == null)
-                    return double.NaN;
-
-                return thermoEntry.Enthalpy- enthalpy;
-            }
-            double temperature = NewtonsMethod.Solve(500, 1, fx, minX: MinTemperature, maxX: MaxTemperatureGivenPressure(pressure));
-            if (double.IsNaN(temperature))
-                return null;
-            return GetThermoEntryAtTemperatureAndPressure(temperature, pressure);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="entropy"></param>
-        /// <param name="pressure"></param>
-        /// <returns>null if an entry cannot be found</returns>
-        public IThermoEntry GetThermoEntryAtEntropyAndPressure(double entropy, double pressure)
-        {
-            IThermoEntry liqEntry = GetThermoEntryAtSatPressure(pressure, SaturationRegion.Liquid),
-                vapEntry = GetThermoEntryAtSatPressure(pressure, SaturationRegion.Vapor);
-            if(vapEntry != null && liqEntry != null &&
-                vapEntry.Entropy >= entropy && liqEntry.Entropy <= entropy)
-            {
-                return PVTEntry.BuildLiquidVaporEntry(vapEntry, liqEntry, (vapEntry.Entropy - entropy) /(vapEntry.Entropy - liqEntry.Entropy));
-            }
-
-            double fx(double x)
-            {
-                IThermoEntry thermoEntry = GetThermoEntryAtTemperatureAndPressure(x, pressure);
-                if (thermoEntry == null)
-                    return double.NaN;
-                return thermoEntry.Entropy - entropy;
-            }
-            double temperature = NewtonsMethod.Solve(300, 0.0001, fx, minX: MinTemperature, maxX: MaxTemperatureGivenPressure(pressure));
-            if (double.IsNaN(temperature))
-                return null;
-            return GetThermoEntryAtTemperatureAndPressure(temperature, pressure);
-        }
 
         /// <summary>
         /// 
@@ -236,7 +177,7 @@ namespace EngineeringLookupTables.PVTTable
         /// <param name="pressure">between 0 and CriticalPressure (in K)</param>
         /// <param name="phase">cannot be solid</param>
         /// <returns></returns>
-        public IThermoEntry GetThermoEntryAtSatPressure(double satPressure, SaturationRegion phase)
+        public override PVTEntry GetEntryAtSatPressure(double satPressure, SaturationRegion phase)
         {
             if (!TryGetSatTemperatureUsingPressure(satPressure, out double satTemp))
             {
@@ -260,7 +201,7 @@ namespace EngineeringLookupTables.PVTTable
         /// <param name="satTemp">Must be between 273.15 and CriticalTemperature (in K)</param>
         /// <param name="phase"></param>
         /// <returns>null if out of range</returns>
-        public IThermoEntry GetThermoEntryAtSatTemp(double satTemp, SaturationRegion phase)
+        public override PVTEntry GetEntryAtSatTemp(double satTemp, SaturationRegion phase)
         {
             if(!TryGetSatPressureUsingTemperature(satTemp, out double satPressure))
             {
@@ -285,61 +226,61 @@ namespace EngineeringLookupTables.PVTTable
         /// <param name="temperature"></param>
         /// <param name="pressure"></param>
         /// <returns>null if out of range</returns>
-        public IThermoEntry GetThermoEntryAtTemperatureAndPressure(double temperature, double pressure)
+        public override PVTEntry GetEntryAtTemperatureAndPressure(double temperature, double pressure)
         {
             SteamEquationRegion equationRegion = FindRegion(temperature, pressure);
-            IThermoEntry thermoEntry;
+            PVTEntry entry;
             switch (equationRegion)
             {
                 case SteamEquationRegion.Region1:
                 case SteamEquationRegion.Region4:
-                    thermoEntry = Region1Equation(temperature, pressure);
+                    entry = Region1Equation(temperature, pressure);
                     break;
                 case SteamEquationRegion.Region2:
-                    thermoEntry = Region2Equation(temperature, pressure);
+                    entry = Region2Equation(temperature, pressure);
                     break;
                 case SteamEquationRegion.Region3:
-                    thermoEntry = Region3Equation(temperature, pressure);
+                    entry = Region3Equation(temperature, pressure);
                     break;
                 case SteamEquationRegion.Region5:
-                    thermoEntry = Region5Equation(temperature, pressure);
+                    entry = Region5Equation(temperature, pressure);
                     break;
                 case SteamEquationRegion.OutOfRange:
                 default:
-                    thermoEntry = null;
+                    entry = null;
                     break;
             }
-            return thermoEntry;
-        }
-
-        /// <summary>
-        /// The model is undefined when the pressure is greater than 50 MPa AND the temperature is greater than 800
-        /// </summary>
-        /// <param name="pressure"></param>
-        private double MaxTemperatureGivenPressure(double pressure)
-        {
-            if (pressure > 50e6)
-                return 800 + 273.15;
-            return 2273.15;
+            return entry;
         }
 
 
         /// <summary>
-        /// The model is undefined when the pressure is greater than 50 MPa AND the temperature is greater than 800
+        /// 
         /// </summary>
-        /// <param name="pressure"></param>
-        private double MinTemperatureGivenPressure(double pressure)
+        /// <param name="pressure">in Pa</param>
+        /// <returns></returns>
+        public override Range GetTemperatureRange(double pressure)
         {
             if (pressure > 50e6)
-                return 0;
-            return 800 + 273.15;
+                return new Range(273.15, 800 + 273.15);
+            return new Range(800 + 273.15, 2000 + 273.15);
         }
 
-        public double MaxPressure { get; } = 100e6;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="temperature">in K</param>
+        /// <returns></returns>
+        public override Range GetPressureRange(double temperature)
+        {
+            if (temperature > 800)
+                return new Range(0, 10e6);
+            return new Range(0, 100e6);
+        }
 
-        public double MinPressure { get; } = 0;
+        public override double CriticalTemperature => 647.096;
 
-        #endregion
+        public override double CriticalPressure => 22.06e6;
     }
 }

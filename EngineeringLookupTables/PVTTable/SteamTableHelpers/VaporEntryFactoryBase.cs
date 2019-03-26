@@ -16,20 +16,12 @@ namespace EngineeringLookupTables.PVTTable.SteamTableHelpers
             CriticalPressure = criticalPressure;
             IdealCoefficients = BuildIdealCoefficients();
             ResidualCoefficients = BuildResidualCoefficients();
+            FinishPropsSetup();
         }
 
-        private double TauShift { get; }
 
-        private RegionCoefficients[] ResidualCoefficients { get; set; }
-        private RegionCoefficients[] IdealCoefficients { get; set; }
-        public double CriticalTemperature { get; }
 
-        public double CriticalPressure { get; }
-
-        protected abstract RegionCoefficients[] BuildResidualCoefficients();
-        protected abstract RegionCoefficients[] BuildIdealCoefficients();
-
-        public override PVTEntry BuildThermoEntry()
+        private void FinishPropsSetup()
         {
             Props.Gamma = Math.Log(Math.PI);
             Props.GammaPi = 1 / Math.PI;
@@ -62,8 +54,18 @@ namespace EngineeringLookupTables.PVTTable.SteamTableHelpers
                 else
                     Region = Region.Gas;
             }
-
-            return base.BuildThermoEntry();
         }
+
+
+        private double TauShift { get; }
+
+        private RegionCoefficients[] ResidualCoefficients { get; set; }
+        private RegionCoefficients[] IdealCoefficients { get; set; }
+        public double CriticalTemperature { get; }
+
+        public double CriticalPressure { get; }
+
+        protected abstract RegionCoefficients[] BuildResidualCoefficients();
+        protected abstract RegionCoefficients[] BuildIdealCoefficients();
     }
 }

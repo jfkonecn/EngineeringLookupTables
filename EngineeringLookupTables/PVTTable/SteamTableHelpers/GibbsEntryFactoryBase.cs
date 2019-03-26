@@ -18,7 +18,7 @@ namespace EngineeringLookupTables.PVTTable.SteamTableHelpers
             Props.Pressure = pressure;
         }
 
-        public virtual PVTEntry BuildThermoEntry()
+        public PVTEntry BuildThermoEntry()
         {
             return new PVTEntry()
             {
