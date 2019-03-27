@@ -40,27 +40,7 @@ namespace EngineeringLookupTables.PVTTable
         /// <returns></returns>
         public PVTEntry GetEntryAtEntropyAndPressure(double entropy, double pressure)
         {
-            PVTEntry liqEntry = GetEntryAtSatPressure(pressure, SaturationRegion.Liquid);
-            PVTEntry vapEntry = GetEntryAtSatPressure(pressure, SaturationRegion.Vapor);
-            if (vapEntry != null && liqEntry != null &&
-                vapEntry.Entropy >= entropy && liqEntry.Entropy <= entropy)
-            {
-                double liqFac = (vapEntry.Entropy - entropy) / (vapEntry.Entropy - liqEntry.Entropy);
-                LiquidVaporEntryFactory fac = new LiquidVaporEntryFactory(vapEntry, liqEntry, liqFac);
-                return fac.BuildThermoEntry();
-            }
-
-            double fx(double x)
-            {
-                IThermoEntry thermoEntry = GetThermoEntryAtTemperatureAndPressure(x, pressure);
-                if (thermoEntry == null)
-                    return double.NaN;
-                return thermoEntry.Entropy - entropy;
-            }
-            double temperature = NewtonsMethod.Solve(300, 0.0001, fx, minX: MinTemperature, maxX: MaxTemperatureGivenPressure(pressure));
-            if (double.IsNaN(temperature))
-                return null;
-            return GetThermoEntryAtTemperatureAndPressure(temperature, pressure);
+            return GetEntryAtPressureAndProperty(pressure, entropy, (x) => x.Entropy);
         }
 
         /// <summary>
@@ -71,12 +51,21 @@ namespace EngineeringLookupTables.PVTTable
         /// <returns></returns>
         public PVTEntry GetEntryAtEnthalpyAndPressure(double enthalpy, double pressure)
         {
+            return GetEntryAtPressureAndProperty(pressure, enthalpy, (x) => x.Enthalpy);
+        }
+
+
+
+
+        private PVTEntry GetEntryAtPressureAndProperty(
+            double pressure, double targetPropVal, Func<PVTEntry, double> propGetter)
+        {
             PVTEntry liqEntry = GetEntryAtSatPressure(pressure, SaturationRegion.Liquid);
             PVTEntry vapEntry = GetEntryAtSatPressure(pressure, SaturationRegion.Vapor);
             if (vapEntry != null && liqEntry != null &&
-                vapEntry.Enthalpy >= enthalpy && liqEntry.Enthalpy <= enthalpy)
+                propGetter(vapEntry) >= targetPropVal && propGetter(liqEntry) <= targetPropVal)
             {
-                double liqFac = (vapEntry.Enthalpy - enthalpy) / (vapEntry.Enthalpy - liqEntry.Enthalpy);
+                double liqFac = (propGetter(vapEntry) - targetPropVal) / (propGetter(vapEntry) - propGetter(liqEntry));
                 LiquidVaporEntryFactory fac = new LiquidVaporEntryFactory(vapEntry, liqEntry, liqFac);
                 return fac.BuildThermoEntry();
             }
@@ -87,7 +76,7 @@ namespace EngineeringLookupTables.PVTTable
                 if (entry == null)
                     return double.NaN;
 
-                return entry.Enthalpy - enthalpy;
+                return entry.Enthalpy - targetPropVal;
             }
             Range tempRange = GetTemperatureRange(pressure);
             double temperature = NewtonsMethod.Solve(500, 1, fx, minX: tempRange.Min, maxX: tempRange.Max);

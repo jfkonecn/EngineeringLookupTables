@@ -1,5 +1,6 @@
 ﻿using EngineeringLookupTables.Common;
 using EngineeringLookupTables.NumericalMethods;
+using EngineeringLookupTables.PVTTable.SteamTableHelpers;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -80,7 +81,7 @@ namespace EngineeringLookupTables.PVTTable
 
         private bool TryGetSatPressureUsingTemperature(double temperature, out double pressure)
         {
-            if (temperature < MinTemperature || temperature >= CriticalTemperature)
+            if (temperature >= CriticalTemperature)
             {
                 pressure = double.NaN;
                 return false;
@@ -97,7 +98,7 @@ namespace EngineeringLookupTables.PVTTable
 
         private bool TryGetSatTemperatureUsingPressure(double pressure, out double temperature)
         {
-            if (pressure < MinPressure || pressure >= CriticalPressure)
+            if (pressure >= CriticalPressure)
             {
                 temperature = double.NaN;
                 return false;
@@ -115,7 +116,7 @@ namespace EngineeringLookupTables.PVTTable
 
         private bool TryGetBoundary34PressureUsingTemperature(double temperature, out double pressure)
         {
-            if (temperature > MaxTemperature || temperature < CriticalTemperature)
+            if (temperature < CriticalTemperature)
             {
                 pressure = double.NaN;
                 return false;
@@ -127,7 +128,7 @@ namespace EngineeringLookupTables.PVTTable
 
         private bool TryGetBoundary34TemperatureUsingPressure(double pressure, out double temperature)
         {
-            if (pressure > MaxPressure || pressure < CriticalPressure)
+            if (pressure < CriticalPressure)
             {
                 temperature = double.NaN;
                 return false;
@@ -183,16 +184,20 @@ namespace EngineeringLookupTables.PVTTable
             {
                 return null;
             }
+            IPVTEntryFactory fac = null;
             switch (phase)
             {
                 case SaturationRegion.Liquid:
-                    return Region1Equation(satTemp, satPressure);
+                    fac = new Region1Factory(satTemp, satPressure);
+                    break;
                 case SaturationRegion.Vapor:
-                    return Region2Equation(satTemp, satPressure);
+                    fac = new Region2Factory(satTemp, satPressure, CriticalTemperature, CriticalPressure);
+                    break;
                 case SaturationRegion.Solid:
                 default:
                     return null;
             }
+            return fac?.BuildThermoEntry();
         }
 
         /// <summary>
@@ -207,17 +212,21 @@ namespace EngineeringLookupTables.PVTTable
             {
                 return null;
             }
-            
+            IPVTEntryFactory fac = null;
             switch (phase)
             {
                 case SaturationRegion.Liquid:
-                    return Region1Equation(satTemp, satPressure);
+                    fac = new Region1Factory(satTemp, satPressure);
+                    break;
                 case SaturationRegion.Solid:
-                    return Region2Equation(satTemp, satPressure);
+                    fac = new Region2Factory(satTemp, satPressure, CriticalTemperature, CriticalPressure);
+                    break;
                 case SaturationRegion.Vapor:
                 default:
-                    return null;
+                    fac = null;
+                    break;
             }
+            return fac?.BuildThermoEntry();
         }
 
         /// <summary>
@@ -229,28 +238,31 @@ namespace EngineeringLookupTables.PVTTable
         public override PVTEntry GetEntryAtTemperatureAndPressure(double temperature, double pressure)
         {
             SteamEquationRegion equationRegion = FindRegion(temperature, pressure);
-            PVTEntry entry;
+            IPVTEntryFactory fac = null;
             switch (equationRegion)
             {
                 case SteamEquationRegion.Region1:
-                case SteamEquationRegion.Region4:
-                    entry = Region1Equation(temperature, pressure);
+                    fac = new Region1Factory(temperature, pressure);
                     break;
                 case SteamEquationRegion.Region2:
-                    entry = Region2Equation(temperature, pressure);
+                    fac = new Region2Factory(temperature, pressure, CriticalTemperature, CriticalPressure);
                     break;
                 case SteamEquationRegion.Region3:
-                    entry = Region3Equation(temperature, pressure);
+                    Range tempRange = GetTemperatureRange(pressure);
+                    fac = new Region3Factory(temperature, pressure, tempRange.Min, tempRange.Max);
+                    break;
+                case SteamEquationRegion.Region4:
+                    fac = new Region4Factory(temperature, pressure);
                     break;
                 case SteamEquationRegion.Region5:
-                    entry = Region5Equation(temperature, pressure);
+                    fac = new Region4Factory(temperature, pressure);
                     break;
                 case SteamEquationRegion.OutOfRange:
                 default:
-                    entry = null;
+                    fac = null;
                     break;
             }
-            return entry;
+            return fac?.BuildThermoEntry();
         }
 
 
