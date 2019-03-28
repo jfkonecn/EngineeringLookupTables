@@ -95,6 +95,58 @@ namespace EngineeringLookupTables.PVTTable
             }
         }
 
+        public override bool Equals(object obj)
+        {
+            if (!(obj is PVTEntry rhs))
+                return false;
+            return
+            rhs.Region == Region &&
+            rhs.VaporMassFraction == VaporMassFraction &&
+            rhs.LiquidMassFraction == LiquidMassFraction &&
+            rhs.SolidMassFraction == SolidMassFraction &&
+            rhs.Temperature == Temperature &&
+            rhs.Pressure == Pressure &&
+            rhs.SpecificVolume == SpecificVolume &&
+            rhs.InternalEnergy == InternalEnergy &&
+            rhs.Enthalpy == Enthalpy &&
+            rhs.Entropy == Entropy &&
+            rhs.IsochoricHeatCapacity == IsochoricHeatCapacity &&
+            rhs.IsobaricHeatCapacity == IsobaricHeatCapacity &&
+            rhs.SpeedOfSound == SpeedOfSound &&
+            rhs.Density == Density;
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = 570931003;
+            hashCode = hashCode * -1521134295 + Region.GetHashCode();
+            hashCode = hashCode * -1521134295 + VaporMassFraction.GetHashCode();
+            hashCode = hashCode * -1521134295 + LiquidMassFraction.GetHashCode();
+            hashCode = hashCode * -1521134295 + SolidMassFraction.GetHashCode();
+            hashCode = hashCode * -1521134295 + Temperature.GetHashCode();
+            hashCode = hashCode * -1521134295 + Pressure.GetHashCode();
+            hashCode = hashCode * -1521134295 + SpecificVolume.GetHashCode();
+            hashCode = hashCode * -1521134295 + InternalEnergy.GetHashCode();
+            hashCode = hashCode * -1521134295 + Enthalpy.GetHashCode();
+            hashCode = hashCode * -1521134295 + Entropy.GetHashCode();
+            hashCode = hashCode * -1521134295 + IsochoricHeatCapacity.GetHashCode();
+            hashCode = hashCode * -1521134295 + IsobaricHeatCapacity.GetHashCode();
+            hashCode = hashCode * -1521134295 + SpeedOfSound.GetHashCode();
+            hashCode = hashCode * -1521134295 + Density.GetHashCode();
+            return hashCode;
+        }
+
+        public static bool operator ==(PVTEntry lhs, PVTEntry rhs)
+        {
+            return Equals(lhs, rhs);
+        }
+
+        public static bool operator !=(PVTEntry lhs, PVTEntry rhs)
+        {
+            return !(lhs == rhs);
+        }
+
+
         public Region Region { get; set; }
         /// <summary>
         /// between 0 and 1

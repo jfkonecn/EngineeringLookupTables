@@ -35,6 +35,5 @@ namespace EngineeringLookupTables.Tests.Helpers
 
             Assert.That(Region.OutOfBounds != Entry.Region, "Region should not be out of bounds");
         }
-
     }
 }

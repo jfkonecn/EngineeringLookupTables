@@ -50,6 +50,7 @@
   <ItemGroup>
     <Compile Include="Helpers\PVTEntryHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PVTEntryTests.cs" />
     <Compile Include="SteamTableMethods.cs" />
   </ItemGroup>
   <ItemGroup>

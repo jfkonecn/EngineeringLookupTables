@@ -32,4 +32,20 @@ namespace EngineeringLookupTables
         SolidLiquidVapor,
         OutOfBounds
     }
+
+    public enum SaturationRegion
+    {
+        /// <summary>
+        /// Pressure is less than both the sublimation and vaporization curve and is below the critical temperature
+        /// </summary>
+        Vapor = Region.Vapor,
+        /// <summary>
+        /// Pressure is above the vaporization curve and the temperature is greater than the fusion curve and less than the critical temperature
+        /// </summary>
+        Liquid = Region.Liquid,
+        /// <summary>
+        /// Pressure is above the sublimation curve and temperature is less than the fusion curve
+        /// </summary>
+        Solid = Region.Solid
+    }
 }
