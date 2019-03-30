@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using EngineeringLookupTables;
 using EngineeringLookupTables.PVTTable;
+using EngineeringLookupTables.Tests.Helpers;
 using NUnit.Framework;
 
 namespace EngineeringLookupTables.Tests
@@ -35,7 +36,7 @@ namespace EngineeringLookupTables.Tests
             double speedOfSound,
             double vaporFraction, double liquidFraction, double solidFraction)
         {
-            PVTEntry rhs = new PVTEntry()
+            PVTEntry expected = new PVTEntry()
             {
                 Region = region,
                 Temperature = temperature,
@@ -53,8 +54,8 @@ namespace EngineeringLookupTables.Tests
                 Density = 1 / specificVolume
             };
 
-            PVTEntry lhs = _steamTable.GetEntryAtTemperatureAndPressure(temperature, pressure);
-            Assert.That(lhs == rhs);
+            PVTEntry actual = _steamTable.GetEntryAtTemperatureAndPressure(temperature, pressure);
+            ValidateEntry(expected, actual);
         }
 
         [Test]
@@ -74,7 +75,7 @@ namespace EngineeringLookupTables.Tests
             double speedOfSound,
             double vaporFraction, double liquidFraction, double solidFraction)
         {
-            PVTEntry rhs = new PVTEntry()
+            PVTEntry expected = new PVTEntry()
             {
                 Region = (Region)region,
                 Temperature = temperature,
@@ -92,8 +93,8 @@ namespace EngineeringLookupTables.Tests
                 Density = 1 / specificVolume
             };
 
-            PVTEntry lhs = _steamTable.GetEntryAtSatPressure(pressure, region);
-            Assert.That(lhs == rhs);
+            PVTEntry actual = _steamTable.GetEntryAtSatPressure(pressure, region);
+            ValidateEntry(expected, actual);
         }
 
 
@@ -115,7 +116,7 @@ namespace EngineeringLookupTables.Tests
             double speedOfSound,
             double vaporFraction, double liquidFraction, double solidFraction)
         {
-            PVTEntry rhs = new PVTEntry()
+            PVTEntry expected = new PVTEntry()
             {
                 Region = (Region)region,
                 Temperature = temperature,
@@ -132,8 +133,8 @@ namespace EngineeringLookupTables.Tests
                 SolidMassFraction = solidFraction,
                 Density = 1 / specificVolume
             };
-            PVTEntry lhs = _steamTable.GetEntryAtSatTemp(temperature, region);
-            Assert.That(lhs == rhs);
+            PVTEntry actual = _steamTable.GetEntryAtSatTemp(temperature, region);
+            ValidateEntry(expected, actual);
         }
 
 
@@ -155,7 +156,7 @@ namespace EngineeringLookupTables.Tests
             double speedOfSound,
             double vaporFraction, double liquidFraction, double solidFraction)
         {
-            PVTEntry rhs = new PVTEntry()
+            PVTEntry expected = new PVTEntry()
             {
                 Region = region,
                 Temperature = temperature,
@@ -173,8 +174,8 @@ namespace EngineeringLookupTables.Tests
                 Density = 1 / specificVolume
             };
 
-            PVTEntry lhs = _steamTable.GetEntryAtEnthalpyAndPressure(enthalpy, pressure);
-            Assert.That(lhs == rhs);
+            PVTEntry actual = _steamTable.GetEntryAtEnthalpyAndPressure(enthalpy, pressure);
+            ValidateEntry(expected, actual);
         }
 
 
@@ -196,7 +197,7 @@ namespace EngineeringLookupTables.Tests
             double speedOfSound,
             double vaporFraction, double liquidFraction, double solidFraction)
         {
-            PVTEntry rhs = new PVTEntry()
+            PVTEntry expected = new PVTEntry()
             {
                 Region = region,
                 Temperature = temperature,
@@ -214,10 +215,15 @@ namespace EngineeringLookupTables.Tests
                 Density = 1 / specificVolume
             };
 
-            PVTEntry lhs = _steamTable.GetEntryAtEntropyAndPressure(entropy, pressure);
-            Assert.That(lhs == rhs);
+            PVTEntry actual = _steamTable.GetEntryAtEntropyAndPressure(entropy, pressure);
+            ValidateEntry(expected, actual);
         }
 
-
+        private void ValidateEntry(PVTEntry expected, PVTEntry actual)
+        {
+            PVTEntryHelper helper = new PVTEntryHelper(expected);
+            helper.AssertValidFractions();
+            helper.AssertEqual(actual);
+        }
     }
 }

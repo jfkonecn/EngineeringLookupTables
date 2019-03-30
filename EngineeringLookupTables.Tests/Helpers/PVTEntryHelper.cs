@@ -10,30 +10,56 @@ namespace EngineeringLookupTables.Tests.Helpers
 {
     public class PVTEntryHelper
     {        
-        public PVTEntryHelper(PVTEntry entry)
+        public PVTEntryHelper(PVTEntry expected)
         {
-            Entry = entry;
+            Expected = expected;
         }
 
-        public PVTEntry Entry { get; }
+        public PVTEntry Expected { get; }
 
         /// <summary>
         /// 
         /// </summary>
         public void AssertValidFractions()
         {
-            Assert.That(Entry.VaporMassFraction >= 0 && Entry.VaporMassFraction <= 1, 
+            if(Expected.SolidMassFraction == 0 && 
+                Expected.LiquidMassFraction == 0 && 
+                Expected.VaporMassFraction == 0)
+            {
+                return;
+            }
+
+
+            Assert.That(Expected.VaporMassFraction >= 0 && Expected.VaporMassFraction <= 1, 
                 "Vapor fraction is not between 0 and 1");
-            Assert.That(Entry.LiquidMassFraction >= 0 && Entry.LiquidMassFraction <= 1,
+            Assert.That(Expected.LiquidMassFraction >= 0 && Expected.LiquidMassFraction <= 1,
                 "Liquid fraction is not between 0 and 1");
-            Assert.That(Entry.SolidMassFraction >= 0 && Entry.SolidMassFraction <= 1,
+            Assert.That(Expected.SolidMassFraction >= 0 && Expected.SolidMassFraction <= 1,
                 "Solid fraction is not between 0 and 1");
 
-            Assert.That(Entry.VaporMassFraction +
-                Entry.LiquidMassFraction + Entry.SolidMassFraction == 1, 
+            Assert.That(Expected.VaporMassFraction +
+                Expected.LiquidMassFraction + Expected.SolidMassFraction == 1, 
                 "Mass fractions must add to 1");
 
-            Assert.That(Region.OutOfBounds != Entry.Region, "Region should not be out of bounds");
+            Assert.That(Region.OutOfBounds != Expected.Region, "Region should not be out of bounds");
+        }
+
+        public void AssertEqual(PVTEntry actual)
+        {
+            Assert.That(actual.Region == Expected.Region);
+            Assert.That(actual.VaporMassFraction, Is.EqualTo(Expected.VaporMassFraction).Within(0.5).Percent);
+            Assert.That(actual.LiquidMassFraction, Is.EqualTo(Expected.LiquidMassFraction).Within(0.5).Percent);
+            Assert.That(actual.SolidMassFraction, Is.EqualTo(Expected.SolidMassFraction).Within(0.5).Percent);
+            Assert.That(actual.Temperature, Is.EqualTo(Expected.Temperature).Within(0.5).Percent);
+            Assert.That(actual.Pressure, Is.EqualTo(Expected.Pressure).Within(0.5).Percent);
+            Assert.That(actual.SpecificVolume, Is.EqualTo(Expected.SpecificVolume).Within(0.5).Percent);
+            Assert.That(actual.InternalEnergy, Is.EqualTo(Expected.InternalEnergy).Within(0.5).Percent);
+            Assert.That(actual.Enthalpy, Is.EqualTo(Expected.Enthalpy).Within(0.5).Percent);
+            Assert.That(actual.Entropy, Is.EqualTo(Expected.Entropy).Within(0.5).Percent);
+            Assert.That(actual.IsochoricHeatCapacity, Is.EqualTo(Expected.IsochoricHeatCapacity).Within(0.5).Percent);
+            Assert.That(actual.IsobaricHeatCapacity, Is.EqualTo(Expected.IsobaricHeatCapacity).Within(0.5).Percent);
+            Assert.That(actual.SpeedOfSound, Is.EqualTo(Expected.SpeedOfSound).Within(0.5).Percent);
+            Assert.That(actual.Density, Is.EqualTo(Expected.Density).Within(0.5).Percent);
         }
     }
 }
