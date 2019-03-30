@@ -7,10 +7,20 @@ namespace EngineeringLookupTables.PVTTable.SteamTableHelpers
     internal class Region5Factory : VaporEntryFactoryBase
     {
         public Region5Factory(double temperature, double pressure, double criticalTemperature, double criticalPressure) 
-            : base(0, temperature, pressure, criticalTemperature, criticalPressure)
+            : base(
+                  new VaporEntryFactorySpecs()
+                  {
+                      TauShift = 0,
+                      Temperature = temperature,
+                      Pressure = pressure,
+                      CriticalPressure = criticalPressure,
+                      CriticalTemperature = criticalTemperature,
+                      Pi = pressure / 1.0e6,
+                      Tau = 1000 / temperature
+                  })
+
         {
-            Props.Pi = pressure / 1.0e6;
-            Props.Tau = 1000 / temperature;
+
         }
 
         protected override RegionCoefficients[] BuildIdealCoefficients()

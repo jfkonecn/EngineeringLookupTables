@@ -1,4 +1,5 @@
-﻿using EngineeringLookupTables.NumericalMethods;
+﻿using EngineeringLookupTables.Common;
+using EngineeringLookupTables.NumericalMethods;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -14,7 +15,7 @@ namespace EngineeringLookupTables.PVTTable.SteamTableHelpers
         /// <param name="temperature">in K</param>
         /// <param name="pressure">in Pa</param>
         /// <param name="maxTemperature">in K</param>
-        public Region3Factory(double temperature, double pressure, double minTemperature, double maxTemperature)
+        public Region3Factory(double temperature, double pressure, Range temperatureRange)
         {
             Props = new Region3Properties()
             {
@@ -22,8 +23,8 @@ namespace EngineeringLookupTables.PVTTable.SteamTableHelpers
                 Temperature = temperature
             };
 
-            Props.Pressure = NewtonsMethod.Solve(500, 1, (x) => Region3EquationHelper(Props.Temperature, x), 
-                minX: minTemperature, maxX: maxTemperature);
+            NewtonsMethod.Solve((x) => Region3EquationHelper(Props.Temperature, x), 
+                temperatureRange);
             if (double.IsNaN(Props.Pressure))
                 throw new ArgumentOutOfRangeException("Could find a point in region3 at the given temperature and pressure");
         }
@@ -91,7 +92,7 @@ namespace EngineeringLookupTables.PVTTable.SteamTableHelpers
             }
 
             double pressure = Props.PhiDelta * Props.Delta * density * UniversalConstants.WaterGasConstant * Props.Temperature;
-            return pressure;
+            return  Props.Pressure - pressure;
         }
 
 

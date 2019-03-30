@@ -8,10 +8,19 @@ namespace EngineeringLookupTables.PVTTable.SteamTableHelpers
     {
         public Region2Factory(double temperature, double pressure, 
             double criticalTemperature, double criticalPressure) : 
-            base(0.5, temperature, pressure, criticalTemperature, criticalPressure)
+            base(
+                new VaporEntryFactorySpecs()
+                {
+                    TauShift = 0.5,
+                    CriticalPressure = criticalPressure,
+                    CriticalTemperature = criticalTemperature,
+                    Pi = pressure / 1.0e6,
+                    Tau = 540.0 / temperature,
+                    Pressure = pressure,
+                    Temperature = temperature
+                })
         {
-            Props.Pi = pressure / 1.0e6;
-            Props.Tau = 540.0 / temperature;
+
         }
 
 

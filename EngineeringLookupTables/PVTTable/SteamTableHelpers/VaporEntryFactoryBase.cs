@@ -6,14 +6,14 @@ namespace EngineeringLookupTables.PVTTable.SteamTableHelpers
 {
     internal abstract class VaporEntryFactoryBase : GibbsEntryFactoryBase
     {
-        protected VaporEntryFactoryBase(double tauShift,
-            double temperature, double pressure,
-            double criticalTemperature, double criticalPressure) :
-            base(Region.OutOfBounds, temperature, pressure)
+        protected VaporEntryFactoryBase(VaporEntryFactorySpecs specs) :
+            base(Region.OutOfBounds, specs.Temperature, specs.Pressure)
         {
-            TauShift = tauShift;
-            CriticalTemperature = criticalTemperature;
-            CriticalPressure = criticalPressure;
+            Props.Tau = specs.Tau;
+            Props.Pi = specs.Pi;
+            TauShift = specs.TauShift;
+            CriticalTemperature = specs.CriticalTemperature;
+            CriticalPressure = specs.CriticalPressure;
             IdealCoefficients = BuildIdealCoefficients();
             ResidualCoefficients = BuildResidualCoefficients();
             FinishPropsSetup();
@@ -23,9 +23,9 @@ namespace EngineeringLookupTables.PVTTable.SteamTableHelpers
 
         private void FinishPropsSetup()
         {
-            Props.Gamma = Math.Log(Math.PI);
-            Props.GammaPi = 1 / Math.PI;
-            Props.GammaPiPi = -1 / Math.Pow(Math.PI, 2);
+            Props.Gamma = Math.Log(Props.Pi);
+            Props.GammaPi = 1 / Props.Pi;
+            Props.GammaPiPi = -1 / Math.Pow(Props.Pi, 2);
             Props.GammaTau = 0;
             Props.GammaTauTau = 0;
             Props.GammaPiTau = 0;
@@ -38,12 +38,12 @@ namespace EngineeringLookupTables.PVTTable.SteamTableHelpers
             }
             foreach (RegionCoefficients item in ResidualCoefficients)
             {
-                Props.Gamma += item.N * Math.Pow(Math.PI, item.I) * Math.Pow(Props.Tau - TauShift, item.J);
-                Props.GammaPi += item.N * item.I * Math.Pow(Math.PI, item.I - 1) * Math.Pow(Props.Tau - TauShift, item.J);
-                Props.GammaPiPi += item.N * item.I * (item.I - 1) * Math.Pow(Math.PI, item.I - 2) * Math.Pow(Props.Tau - TauShift, item.J);
-                Props.GammaTau += item.N * Math.Pow(Math.PI, item.I) * item.J * Math.Pow(Props.Tau - TauShift, item.J - 1);
-                Props.GammaTauTau += item.N * Math.Pow(Math.PI, item.I) * item.J * (item.J - 1) * Math.Pow(Props.Tau - TauShift, item.J - 2);
-                Props.GammaPiTau += item.N * item.I * Math.Pow(Math.PI, item.I - 1) * item.J * Math.Pow(Props.Tau - TauShift, item.J - 1);
+                Props.Gamma += item.N * Math.Pow(Props.Pi, item.I) * Math.Pow(Props.Tau - TauShift, item.J);
+                Props.GammaPi += item.N * item.I * Math.Pow(Props.Pi, item.I - 1) * Math.Pow(Props.Tau - TauShift, item.J);
+                Props.GammaPiPi += item.N * item.I * (item.I - 1) * Math.Pow(Props.Pi, item.I - 2) * Math.Pow(Props.Tau - TauShift, item.J);
+                Props.GammaTau += item.N * Math.Pow(Props.Pi, item.I) * item.J * Math.Pow(Props.Tau - TauShift, item.J - 1);
+                Props.GammaTauTau += item.N * Math.Pow(Props.Pi, item.I) * item.J * (item.J - 1) * Math.Pow(Props.Tau - TauShift, item.J - 2);
+                Props.GammaPiTau += item.N * item.I * Math.Pow(Props.Pi, item.I - 1) * item.J * Math.Pow(Props.Tau - TauShift, item.J - 1);
             }
 
             Region = Region.Vapor;

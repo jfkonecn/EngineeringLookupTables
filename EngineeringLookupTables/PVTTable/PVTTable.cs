@@ -79,7 +79,7 @@ namespace EngineeringLookupTables.PVTTable
                 return entry.Enthalpy - targetPropVal;
             }
             Range tempRange = GetTemperatureRange(pressure);
-            double temperature = NewtonsMethod.Solve(500, 1, fx, minX: tempRange.Min, maxX: tempRange.Max);
+            double temperature = NewtonsMethod.Solve(fx, tempRange);
             if (double.IsNaN(temperature))
                 return null;
             return GetEntryAtTemperatureAndPressure(temperature, pressure);

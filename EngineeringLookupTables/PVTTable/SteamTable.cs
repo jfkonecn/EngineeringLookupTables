@@ -249,7 +249,7 @@ namespace EngineeringLookupTables.PVTTable
                     break;
                 case SteamEquationRegion.Region3:
                     Range tempRange = GetTemperatureRange(pressure);
-                    fac = new Region3Factory(temperature, pressure, tempRange.Min, tempRange.Max);
+                    fac = new Region3Factory(temperature, pressure, tempRange);
                     break;
                 case SteamEquationRegion.Region4:
                     fac = new Region4Factory(temperature, pressure);
@@ -289,7 +289,7 @@ namespace EngineeringLookupTables.PVTTable
         public override Range GetPressureRange(double temperature)
         {
             if (temperature > 800 + 273.15)
-                return new Range(0, 10e6);
+                return new Range(0, 50e6);
             return new Range(0, 100e6);
         }
 
