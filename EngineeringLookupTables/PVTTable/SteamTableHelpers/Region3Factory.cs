@@ -23,10 +23,13 @@ namespace EngineeringLookupTables.PVTTable.SteamTableHelpers
                 Temperature = temperature
             };
 
-            NewtonsMethod.Solve((x) => Region3EquationHelper(Props.Temperature, x), 
+            SolverResult result = NewtonsMethod.Solve((x) => DensitySolver(Props.Temperature, x), 
                 temperatureRange);
-            if (double.IsNaN(Props.Pressure))
+            if (result.ReachedMaxGuesses)
+            {
                 throw new ArgumentOutOfRangeException("Could find a point in region3 at the given temperature and pressure");
+            }
+            Props.Density = result.Value;
         }
 
 
@@ -64,7 +67,7 @@ namespace EngineeringLookupTables.PVTTable.SteamTableHelpers
         /// <param name="temperature">in K</param>
         /// <param name="density">in kg/m3</param>
         /// <returns></returns>
-        private double Region3EquationHelper(double temperature, double density)
+        private double DensitySolver(double temperature, double density)
         {
             double n1 = Region3Coefficients[0].N;
             double tempDelta = density / 322;

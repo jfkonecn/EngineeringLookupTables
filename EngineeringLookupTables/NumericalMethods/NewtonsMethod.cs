@@ -15,7 +15,7 @@ namespace EngineeringLookupTables.NumericalMethods
         /// <param name="fx"></param>
         /// <param name="fxPrime"></param>
         /// <returns>first x value found where f(x) == 0 if max guesses reached then NaN is returned</returns>
-        public static double Solve(Func<double, double> fx, Func<double, double> fxPrime, Range xRange)
+        public static SolverResult Solve(Func<double, double> fx, Func<double, double> fxPrime, Range xRange)
         {
             double curX = xRange.MidPoint,
                 fxResult = fx(curX),
@@ -30,14 +30,18 @@ namespace EngineeringLookupTables.NumericalMethods
                 curX = curX > xRange.Max ? xRange.Max : curX;
                 totalGuesses++;
             }
-            return curX;
+            return new SolverResult()
+            {
+                Value = curX,
+                ReachedMaxGuesses = totalGuesses == maxGuesses
+            };
         }
         /// <summary>
         /// Use finite difference formulas to calculate fxPrime
         /// </summary>
         /// <param name="fx"></param>
         /// <returns></returns>
-        public static double Solve(Func<double, double> fx, Range xRange)
+        public static SolverResult Solve(Func<double, double> fx, Range xRange)
         {
             return Solve(fx, (x) => 
             {

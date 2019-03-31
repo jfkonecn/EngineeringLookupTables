@@ -1,4 +1,5 @@
-﻿using EngineeringLookupTables.PVTTable;
+﻿using EngineeringLookupTables.Common;
+using EngineeringLookupTables.PVTTable;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -45,34 +46,36 @@ namespace EngineeringLookupTables.Tests.Helpers
             Assert.That(Region.OutOfBounds != Expected.Region, "Region should not be out of bounds");
         }
 
-        public void AssertEqual(PVTEntry actual)
+        public void AssertEqual(Maybe<PVTEntry> actual)
         {
-            Assert.That(actual.Region == Expected.Region, nameof(Expected.Region));
-            Assert.That(actual.VaporMassFraction, Is.EqualTo(Expected.VaporMassFraction).Within(0.5).Percent, 
+            Assert.That(actual.HasValue, nameof(actual.HasValue));
+            PVTEntry actualValue = actual.Value;
+            Assert.That(actualValue.Region == Expected.Region, nameof(Expected.Region));
+            Assert.That(actualValue.VaporMassFraction, Is.EqualTo(Expected.VaporMassFraction).Within(0.5).Percent, 
                 nameof(Expected.VaporMassFraction));
-            Assert.That(actual.LiquidMassFraction, Is.EqualTo(Expected.LiquidMassFraction).Within(0.5).Percent,
+            Assert.That(actualValue.LiquidMassFraction, Is.EqualTo(Expected.LiquidMassFraction).Within(0.5).Percent,
                 nameof(Expected.LiquidMassFraction));
-            Assert.That(actual.SolidMassFraction, Is.EqualTo(Expected.SolidMassFraction).Within(0.5).Percent,
+            Assert.That(actualValue.SolidMassFraction, Is.EqualTo(Expected.SolidMassFraction).Within(0.5).Percent,
                 nameof(Expected.SolidMassFraction));
-            Assert.That(actual.Temperature, Is.EqualTo(Expected.Temperature).Within(0.5).Percent,
+            Assert.That(actualValue.Temperature, Is.EqualTo(Expected.Temperature).Within(0.5).Percent,
                 nameof(Expected.Temperature));
-            Assert.That(actual.Pressure, Is.EqualTo(Expected.Pressure).Within(0.5).Percent,
+            Assert.That(actualValue.Pressure, Is.EqualTo(Expected.Pressure).Within(0.5).Percent,
                 nameof(Expected.Pressure));
-            Assert.That(actual.SpecificVolume, Is.EqualTo(Expected.SpecificVolume).Within(0.5).Percent,
+            Assert.That(actualValue.SpecificVolume, Is.EqualTo(Expected.SpecificVolume).Within(0.5).Percent,
                 nameof(Expected.SpecificVolume));
-            Assert.That(actual.InternalEnergy, Is.EqualTo(Expected.InternalEnergy).Within(0.5).Percent,
+            Assert.That(actualValue.InternalEnergy, Is.EqualTo(Expected.InternalEnergy).Within(0.5).Percent,
                 nameof(Expected.InternalEnergy));
-            Assert.That(actual.Enthalpy, Is.EqualTo(Expected.Enthalpy).Within(0.5).Percent,
+            Assert.That(actualValue.Enthalpy, Is.EqualTo(Expected.Enthalpy).Within(0.5).Percent,
                 nameof(Expected.Enthalpy));
-            Assert.That(actual.Entropy, Is.EqualTo(Expected.Entropy).Within(0.5).Percent,
+            Assert.That(actualValue.Entropy, Is.EqualTo(Expected.Entropy).Within(0.5).Percent,
                 nameof(Expected.Entropy));
-            Assert.That(actual.IsochoricHeatCapacity, Is.EqualTo(Expected.IsochoricHeatCapacity).Within(0.5).Percent,
+            Assert.That(actualValue.IsochoricHeatCapacity, Is.EqualTo(Expected.IsochoricHeatCapacity).Within(0.5).Percent,
                 nameof(Expected.IsochoricHeatCapacity));
-            Assert.That(actual.IsobaricHeatCapacity, Is.EqualTo(Expected.IsobaricHeatCapacity).Within(0.5).Percent,
+            Assert.That(actualValue.IsobaricHeatCapacity, Is.EqualTo(Expected.IsobaricHeatCapacity).Within(0.5).Percent,
                 nameof(Expected.IsobaricHeatCapacity));
-            Assert.That(actual.SpeedOfSound, Is.EqualTo(Expected.SpeedOfSound).Within(0.5).Percent,
+            Assert.That(actualValue.SpeedOfSound, Is.EqualTo(Expected.SpeedOfSound).Within(0.5).Percent,
                 nameof(Expected.SpeedOfSound));
-            Assert.That(actual.Density, Is.EqualTo(Expected.Density).Within(0.5).Percent,
+            Assert.That(actualValue.Density, Is.EqualTo(Expected.Density).Within(0.5).Percent,
                 nameof(Expected.Density));
         }
     }
