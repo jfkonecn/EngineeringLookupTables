@@ -40,6 +40,7 @@ namespace EngineeringLookupTables.PVTTable
             InterpolateProperties((x) => x.Temperature, (x) => Temperature = x, container);
             InterpolateProperties((x) => x.Pressure, (x) => Pressure = x, container);
             InterpolateProperties((x) => x.SpecificVolume, (x) => SpecificVolume = x, container);
+            Density = 1 / SpecificVolume;
             InterpolateProperties((x) => x.InternalEnergy, (x) => InternalEnergy = x, container);
             InterpolateProperties((x) => x.Enthalpy, (x) => Enthalpy = x, container);
             InterpolateProperties((x) => x.Entropy, (x) => Entropy = x, container);

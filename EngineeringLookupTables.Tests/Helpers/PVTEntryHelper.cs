@@ -38,7 +38,8 @@ namespace EngineeringLookupTables.Tests.Helpers
                 "Solid fraction is not between 0 and 1");
 
             Assert.That(Expected.VaporMassFraction +
-                Expected.LiquidMassFraction + Expected.SolidMassFraction == 1, 
+                Expected.LiquidMassFraction + Expected.SolidMassFraction, 
+                Is.EqualTo(1).Within(0.001),
                 "Mass fractions must add to 1");
 
             Assert.That(Region.OutOfBounds != Expected.Region, "Region should not be out of bounds");

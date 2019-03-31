@@ -76,7 +76,7 @@ namespace EngineeringLookupTables.PVTTable
                 if (entry == null)
                     return double.NaN;
 
-                return entry.Enthalpy - targetPropVal;
+                return propGetter(entry) - targetPropVal;
             }
             Range tempRange = GetTemperatureRange(pressure);
             double temperature = NewtonsMethod.Solve(fx, tempRange);

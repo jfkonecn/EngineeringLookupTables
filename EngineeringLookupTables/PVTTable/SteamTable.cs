@@ -218,10 +218,10 @@ namespace EngineeringLookupTables.PVTTable
                 case SaturationRegion.Liquid:
                     fac = new Region1Factory(satTemp, satPressure);
                     break;
-                case SaturationRegion.Solid:
+                case SaturationRegion.Vapor:
                     fac = new Region2Factory(satTemp, satPressure, CriticalTemperature, CriticalPressure);
                     break;
-                case SaturationRegion.Vapor:
+                case SaturationRegion.Solid:
                 default:
                     fac = null;
                     break;
