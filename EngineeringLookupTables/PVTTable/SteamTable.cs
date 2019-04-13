@@ -54,8 +54,8 @@ namespace EngineeringLookupTables.PVTTable
                 return SteamEquationRegion.Region2;
             }
 
-            Maybe<double> satPressure = GetSatPressure(temperature);
-            if (satPressure.HasValue)
+            double? satPressure = GetSatPressure(temperature);
+            if (satPressure != null)
             {
                 if (satPressure.Value == pressure)
                 {
@@ -68,8 +68,8 @@ namespace EngineeringLookupTables.PVTTable
                 return SteamEquationRegion.Region1;
             }
 
-            Maybe<double> boundaryPressure = GetBoundary34Pressure(temperature);
-            if (boundaryPressure.HasValue)
+            double? boundaryPressure = GetBoundary34Pressure(temperature);
+            if (boundaryPressure != null)
             {
                 if (boundaryPressure.Value > pressure)
                 {
@@ -83,11 +83,11 @@ namespace EngineeringLookupTables.PVTTable
 
 
 
-        private Maybe<double> GetSatPressure(double temperature)
+        private double? GetSatPressure(double temperature)
         {
             if (temperature >= CriticalTemperature)
             {
-                return Maybe<double>.None;
+                return null;
             }
             double satTempRatio = temperature / 1;
             double theta = satTempRatio + (nRegion4[8] / (satTempRatio - nRegion4[9]));
@@ -95,14 +95,14 @@ namespace EngineeringLookupTables.PVTTable
             double B = nRegion4[2] * Math.Pow(theta, 2) + nRegion4[3] * theta + nRegion4[4];
             double C = nRegion4[5] * Math.Pow(theta, 2) + nRegion4[6] * theta + nRegion4[7];
             double pressure = Math.Pow((2 * C) / (-B + Math.Pow(Math.Pow(B, 2) - 4 * A * C, 0.5)), 4) * 1e6;
-            return Maybe<double>.Some(pressure);
+            return pressure;
         }
 
-        private Maybe<double> GetSatTemperature(double pressure)
+        private double? GetSatTemperature(double pressure)
         {
             if (pressure >= CriticalPressure)
             {
-                return Maybe<double>.None;
+                return null;
             }
 
             double beta = Math.Pow(pressure / 1e6, 0.25);
@@ -111,37 +111,20 @@ namespace EngineeringLookupTables.PVTTable
             double G = nRegion4[1] * Math.Pow(beta, 2) + nRegion4[4] * beta + nRegion4[7];
             double D = (2 * G) / (-F - Math.Pow(Math.Pow(F, 2) - 4 * E * G, 0.5));
             double temperature = (nRegion4[9] + D - Math.Pow(Math.Pow(nRegion4[9] + D, 2) - 4 * (nRegion4[8] + nRegion4[9] * D), 0.5)) / 2;
-            return Maybe<double>.Some(temperature);
+            return temperature;
         }
 
 
-        private Maybe<double> GetBoundary34Pressure(double temperature)
+        private double? GetBoundary34Pressure(double temperature)
         {
             if (temperature < CriticalTemperature)
             {
-                return Maybe<double>.None;
+                return null;
             }
             double theta = temperature / 1;
             double pressure = (nBoundary34[0] + nBoundary34[1] * theta + nBoundary34[2] * Math.Pow(theta, 2)) * 1e6;
-            return Maybe<double>.Some(pressure);
+            return pressure;
         }
-
-        private Maybe<double> GetBoundary34Temperature(double pressure)
-        {
-            if (pressure < CriticalPressure)
-            {
-                return Maybe<double>.None;
-            }
-            double pi = pressure / 1e6;
-            double temperature = (nBoundary34[3] + Math.Sqrt((pi - nBoundary34[4]) / nBoundary34[2]));
-            return Maybe<double>.Some(temperature);
-        }
-
-
-
-
-
-
 
 
         private static readonly double[] nRegion4 = new double[]
@@ -177,12 +160,12 @@ namespace EngineeringLookupTables.PVTTable
         /// <param name="pressure">between 0 and CriticalPressure (in K)</param>
         /// <param name="phase">cannot be solid</param>
         /// <returns></returns>
-        public override Maybe<PVTEntry> GetEntryAtSatPressure(double satPressure, SaturationRegion phase)
+        public override PVTEntry GetEntryAtSatPressure(double satPressure, SaturationRegion phase)
         {
-            Maybe<double> satTemp = GetSatTemperature(satPressure);
-            if (!satTemp.HasValue)
+            double? satTemp = GetSatTemperature(satPressure);
+            if (satTemp == null)
             {
-                return Maybe<PVTEntry>.None;
+                return null;
             }
             IPVTEntryFactory fac = null;
             switch (phase)
@@ -197,7 +180,7 @@ namespace EngineeringLookupTables.PVTTable
                 default:
                     break;
             }
-            return fac == null ? Maybe<PVTEntry>.None : Maybe<PVTEntry>.Some(fac.BuildThermoEntry());
+            return fac?.BuildThermoEntry();
         }
 
         /// <summary>
@@ -206,13 +189,13 @@ namespace EngineeringLookupTables.PVTTable
         /// <param name="satTemp">Must be between 273.15 and CriticalTemperature (in K)</param>
         /// <param name="phase"></param>
         /// <returns>null if out of range</returns>
-        public override Maybe<PVTEntry> GetEntryAtSatTemp(double satTemp, SaturationRegion phase)
+        public override PVTEntry GetEntryAtSatTemp(double satTemp, SaturationRegion phase)
         {
-             Maybe<double> satPressure = GetSatPressure(satTemp);
+             double? satPressure = GetSatPressure(satTemp);
 
-            if (!satPressure.HasValue)
+            if (satPressure == null)
             {
-                return Maybe<PVTEntry>.None;
+                return null;
             }
             IPVTEntryFactory fac = null;
             switch (phase)
@@ -228,7 +211,7 @@ namespace EngineeringLookupTables.PVTTable
                     fac = null;
                     break;
             }
-            return fac == null ? Maybe<PVTEntry>.None : Maybe<PVTEntry>.Some(fac.BuildThermoEntry());
+            return fac?.BuildThermoEntry();
         }
 
         /// <summary>
@@ -237,7 +220,7 @@ namespace EngineeringLookupTables.PVTTable
         /// <param name="temperature"></param>
         /// <param name="pressure"></param>
         /// <returns>null if out of range</returns>
-        public override Maybe<PVTEntry> GetEntryAtTemperatureAndPressure(double temperature, double pressure)
+        public override PVTEntry GetEntryAtTemperatureAndPressure(double temperature, double pressure)
         {
             SteamEquationRegion equationRegion = FindRegion(temperature, pressure);
             IPVTEntryFactory fac = null;
@@ -264,7 +247,7 @@ namespace EngineeringLookupTables.PVTTable
                     fac = null;
                     break;
             }
-            return fac == null ? Maybe<PVTEntry>.None : Maybe<PVTEntry>.Some(fac.BuildThermoEntry());
+            return fac?.BuildThermoEntry();
         }
 
 

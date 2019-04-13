@@ -55,7 +55,7 @@ namespace EngineeringLookupTables.Tests
                 Density = 1 / specificVolume
             };
 
-            Maybe<PVTEntry> actual = _steamTable.GetEntryAtTemperatureAndPressure(temperature, pressure);
+            PVTEntry actual = _steamTable.GetEntryAtTemperatureAndPressure(temperature, pressure);
             ValidateEntry(expected, actual);
         }
 
@@ -94,7 +94,7 @@ namespace EngineeringLookupTables.Tests
                 Density = 1 / specificVolume
             };
 
-            Maybe<PVTEntry> actual = _steamTable.GetEntryAtSatPressure(pressure, region);
+            PVTEntry actual = _steamTable.GetEntryAtSatPressure(pressure, region);
             ValidateEntry(expected, actual);
         }
 
@@ -134,7 +134,7 @@ namespace EngineeringLookupTables.Tests
                 SolidMassFraction = solidFraction,
                 Density = 1 / specificVolume
             };
-            Maybe<PVTEntry> actual = _steamTable.GetEntryAtSatTemp(temperature, region);
+            PVTEntry actual = _steamTable.GetEntryAtSatTemp(temperature, region);
             ValidateEntry(expected, actual);
         }
 
@@ -175,7 +175,7 @@ namespace EngineeringLookupTables.Tests
                 Density = 1 / specificVolume
             };
 
-            Maybe<PVTEntry> actual = _steamTable.GetEntryAtEnthalpyAndPressure(enthalpy, pressure);
+            PVTEntry actual = _steamTable.GetEntryAtEnthalpyAndPressure(enthalpy, pressure);
             ValidateEntry(expected, actual);
         }
 
@@ -216,11 +216,11 @@ namespace EngineeringLookupTables.Tests
                 Density = 1 / specificVolume
             };
 
-            Maybe<PVTEntry> actual = _steamTable.GetEntryAtEntropyAndPressure(entropy, pressure);
+            PVTEntry actual = _steamTable.GetEntryAtEntropyAndPressure(entropy, pressure);
             ValidateEntry(expected, actual);
         }
 
-        private void ValidateEntry(PVTEntry expected, Maybe<PVTEntry> actual)
+        private void ValidateEntry(PVTEntry expected, PVTEntry actual)
         {
             PVTEntryHelper helper = new PVTEntryHelper(expected);
             helper.AssertValidFractions();

@@ -46,10 +46,17 @@ namespace EngineeringLookupTables.Tests.Helpers
             Assert.That(Region.OutOfBounds != Expected.Region, "Region should not be out of bounds");
         }
 
-        public void AssertEqual(Maybe<PVTEntry> actual)
+        public void AssertEqual(PVTEntry actual)
         {
-            Assert.That(actual.HasValue, nameof(actual.HasValue));
-            PVTEntry actualValue = actual.Value;
+            if(actual == Expected)
+            {
+                Assert.Pass();
+            }
+            else if(actual == null)
+            {
+                Assert.Fail();
+            }
+            PVTEntry actualValue = actual;
             Assert.That(actualValue.Region == Expected.Region, nameof(Expected.Region));
             Assert.That(actualValue.VaporMassFraction, Is.EqualTo(Expected.VaporMassFraction).Within(0.5).Percent, 
                 nameof(Expected.VaporMassFraction));
